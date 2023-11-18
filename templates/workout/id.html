@@ -1,0 +1,39 @@
+{{define "workout-id"}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        {{range .Data}}
+
+        <p>{{.ExerciseName}}</p>
+
+            {{range .Sets}}
+
+            <form action="/app/workout" method="post">
+                <input type="text" name="junction_id" value="{{.JunctionID}}" hidden >
+                <input type="number" name="set_number" value="{{.SetNumber}}" hidden >
+                <label for="weight">
+                    Weight
+                    <input onclick="this.select()" type="number" name="weight" min="0" max="1000" {{if not (eq .Weight 0)}}placeholder="{{.Weight}}"{{end}}>
+                </label>
+                <label for="reps">
+                    Reps
+                    <input onclick="this.select()" type="number" name="reps" min="0" max="1000" {{if not (eq .Reps 0)}}placeholder="{{.Reps}}"{{end}}>
+                </label>
+                <input type="submit" value="Submit">
+            </form>
+
+            {{end}}
+
+        {{end}}
+    </main>
+</body>
+</html>
+
+{{end}}

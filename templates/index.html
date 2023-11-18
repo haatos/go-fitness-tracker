@@ -1,0 +1,27 @@
+{{define "index"}}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <form action="/login" method="post">
+        <input type="text" name="identity" placeholder="Username or email..." />
+        <input type="password" name="password" placeholder="Password..." />
+        <input type="submit" value="Submit" />
+      </form>
+      {{if .}}
+
+      <p>Login failed: {{.Error}}</p>
+
+      {{end}}
+      <p>No account yet? Register <a href="/register">here</a></p>
+    </main>
+  </body>
+</html>
+
+{{end}}

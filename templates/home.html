@@ -1,0 +1,21 @@
+{{define "home"}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        {{range .}}
+
+        <a href="/app/workout/{{.ID}}">Start workout {{.Name}}</a>
+
+        {{end}}
+    </main>
+</body>
+</html>
+
+{{end}}
