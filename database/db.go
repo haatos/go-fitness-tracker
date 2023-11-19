@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 func InitializeDatabase() *sql.DB {
@@ -28,10 +30,45 @@ func InitializeDatabase() *sql.DB {
 			id TEXT PRIMARY KEY,
 			name TEXT,
 			user_id TEXT,
-			FOREIGN KEY(user_id) REFERENCES user(id)
+			FOREIGN KEY(user_id) REFERENCES user(id),
+			UNIQUE(name, user_id)
 		)
 		`,
 	)
+
+	exercises := []string{
+		"backsquat",
+		"frontsquat",
+		"deadlift",
+		"romanian deadlift",
+		"split squat",
+		"bench press",
+		"dumbbell bench press",
+		"incline bench press",
+		"incline dumbbell bench press",
+		"pull up",
+		"chin up",
+		"cable pulldown",
+		"cable row",
+	}
+
+	var backSquatID string
+	db.QueryRow("SELECT id FROM exercise WHERE name = $1", "backsquat").Scan(&backSquatID)
+
+	if backSquatID == "" {
+		for _, e := range exercises {
+			id := uuid.NewString()
+			_, err := db.Exec(
+				`
+			INSERT INTO exercise (id, name) values($1, $2)
+			`,
+				id, e,
+			)
+			if err != nil {
+				log.Println("err adding default exercise:", err)
+			}
+		}
+	}
 
 	_, err = db.Exec(
 		`
@@ -47,6 +84,7 @@ func InitializeDatabase() *sql.DB {
 	_, err = db.Exec(
 		`
 		CREATE TABLE IF NOT EXISTS junction (
+			id TEXT PRIMARY KEY,
 			exercise_id TEXT,
 			workout_id TEXT,
 			user_id TEXT,
@@ -67,6 +105,7 @@ func InitializeDatabase() *sql.DB {
 			set_number INTEGER,
 			weight INTEGER,
 			reps INTEGER,
+			time TIMESTAMP,
 			FOREIGN KEY(user_id) REFERENCES user(id),
 			FOREIGN KEY(junction_id) REFERENCES junction(id)
 		)

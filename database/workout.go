@@ -2,9 +2,57 @@ package database
 
 import (
 	"database/sql"
+	"fitness-tracker/model"
 	"fitness-tracker/schema"
 	"time"
+
+	"github.com/google/uuid"
 )
+
+func CreateWorkout(tx *sql.Tx, userID, workoutName string) (model.Workout, error) {
+	w := model.Workout{}
+	id := uuid.NewString()
+	stmt, err := tx.Prepare(
+		`
+		INSERT INTO workout (id, name, user_id) values($1, $2, $3) RETURNING id, name, user_id
+		`,
+	)
+	if err != nil {
+		return w, err
+	}
+	err = stmt.QueryRow(id, workoutName, userID).Scan(&w.ID, &w.Name, &w.UserID)
+	return w, err
+}
+
+func ReadAllWorkouts(db *sql.DB, userID string) ([]model.Workout, error) {
+	workouts := []model.Workout{}
+	stmt, err := db.Prepare(
+		`
+		SELECT id, name, user_id FROM workout
+		where user_id = $1
+		`,
+	)
+	if err != nil {
+		return workouts, err
+	}
+
+	rows, err := stmt.Query(userID)
+	if err != nil {
+		return workouts, err
+	}
+
+	for rows.Next() {
+		w := model.Workout{}
+
+		if err := rows.Scan(&w.ID, &w.Name, &w.UserID); err != nil {
+			return workouts, err
+		}
+
+		workouts = append(workouts, w)
+	}
+
+	return workouts, nil
+}
 
 func ReadWorkoutLastCreated(db *sql.DB, workoutID string) time.Time {
 	var createdString string
@@ -13,9 +61,9 @@ func ReadWorkoutLastCreated(db *sql.DB, workoutID string) time.Time {
 		SELECT e.created
 		FROM workout w
 		INNER JOIN junction j
-		ON j.workout = w.id
+		ON j.workout_id = w.id
 		INNER JOIN entry e
-		ON e.junction = j.id
+		ON e.junction_id = j.id
 		WHERE w.id = $1
 		LIMIT 1
 		`,
@@ -42,9 +90,9 @@ func ReadWorkoutJunctions(db *sql.DB, userID, workoutID string) ([]schema.Workou
 		SELECT e.name, w.name, j.id, j.set_count
 		FROM workout w
 		INNER JOIN junction j
-		ON j.workout = w.id
+		ON j.workout_id = w.id
 		INNER JOIN exercise e
-		ON e.id = j.exercise
+		ON e.id = j.exercise_id
 		WHERE w.user_id = $1 AND w.id = $2
 		`,
 	)

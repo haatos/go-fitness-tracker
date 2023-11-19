@@ -2,20 +2,22 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <main>
-        {{range .}}
+      <a href="/app/workout/create">Create a new workout</a>
 
-        <a href="/app/workout/{{.ID}}">Start workout {{.Name}}</a>
+      {{range .}}
 
-        {{end}}
+      <a href="/app/workout/{{.ID}}">Start workout {{.Name}}</a>
+
+      {{end}}
     </main>
-</body>
+  </body>
 </html>
 
 {{end}}

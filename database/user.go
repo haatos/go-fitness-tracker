@@ -25,6 +25,20 @@ func CreateUser(db *sql.DB, email, passwordHash string) error {
 	)
 }
 
+func ReadUserByID(db *sql.DB, id string) (model.User, error) {
+	u := model.User{}
+	stmt, err := db.Prepare(
+		`
+		SELECT id, email, password_hash, created_on FROM user WHERE id = $1
+		`,
+	)
+	if err != nil {
+		return u, err
+	}
+	err = stmt.QueryRow(id).Scan(&u.ID, &u.Email, &u.PasswordHash, &u.CreatedOn)
+	return u, err
+}
+
 func ReadUserByEmail(db *sql.DB, email string) (model.User, error) {
 	user := model.User{}
 	stmt, err := db.Prepare(
@@ -36,6 +50,6 @@ func ReadUserByEmail(db *sql.DB, email string) (model.User, error) {
 		return user, err
 	}
 
-	err = stmt.QueryRow(email).Scan(&user.ID, &user.Email, &user.PasswordHash)
+	err = stmt.QueryRow(email).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.CreatedOn)
 	return user, err
 }

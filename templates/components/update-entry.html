@@ -1,0 +1,18 @@
+{{define "update-entry"}}
+
+<form hx-put="/app/workout/entry/{{.ID}}" hx-target="this" hx-swap="outerHTML">
+    <input type="text" name="junction_id" value="{{.JunctionID}}" hidden >
+    <input type="number" name="set_number" value="{{.SetNumber}}" hidden >
+    <label for="weight">
+        Weight
+        <input onclick="this.select()" type="number" name="weight" min="0" max="1000" value="{{.Weight}}">
+    </label>
+    <label for="reps">
+        Reps
+        <input onclick="this.select()" type="number" name="reps" min="0" max="1000" value="{{.Reps}}">
+    </label>
+    <input type="submit" value="Submit">
+</form>
+<div id="entry-errors"></div>
+
+{{end}}

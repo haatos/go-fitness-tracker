@@ -1,0 +1,50 @@
+{{define "create-workout"}}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/htmx.org@1.9.8"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <form hx-post="/app/workout/create">
+        <label for="workout_name">
+          Workout name:
+          <input type="text" name="workout_name" />
+        </label>
+        <div id="workout-exercises"></div>
+        <input type="submit" value="Create new workout">
+      </form>
+
+      <div id="new-exercises">
+
+      </div>
+
+      {{range .UserExercises}}
+
+      {{template "add-exercise-button" .}}
+
+      {{end}}
+
+      {{range .DefaultExercises}}
+
+      {{template "add-exercise-button" .}}
+
+      {{end}}
+
+      <form hx-post="/app/exercise/add" hx-target="#new-exercises" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-ext="json-enc">
+        <label for="name">
+          <input type="text" name="name">
+        </label>
+        <input type="submit" value="Create new exercise">
+      </form>
+
+    </main>
+  </body>
+</html>
+
+{{end}}

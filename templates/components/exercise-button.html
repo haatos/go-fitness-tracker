@@ -1,0 +1,11 @@
+{{define "add-exercise-button"}}
+
+<button
+    hx-post="/app/workout/add-exercise/{{.ID}}"
+    hx-target="#workout-exercises"
+    hx-swap="beforeend"
+    >
+    {{.Name}}
+</button>
+
+{{end}}

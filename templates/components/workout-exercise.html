@@ -1,0 +1,10 @@
+{{define "workout-exercise"}}
+
+<div>
+  <input type="text" name="exercise_name" disabled value="{{.Name}}" />
+  <input type="number" name="set_count" placeholder="Sets..." min="0" max="20">
+  <input type="hidden" name="exercise_id" value="{{.ID}}" />
+  <button hx-post="/remove-me" hx-target="closest div" hx-swap="outerHTML">X</button>
+</div>
+
+{{end}}

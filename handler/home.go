@@ -13,7 +13,9 @@ func HandleGetAppHome(db *sql.DB) echo.HandlerFunc {
 	return echo.HandlerFunc(func(c echo.Context) error {
 		userID := c.Get("userID").(string)
 		workouts, err := database.ReadAllWorkouts(db, userID)
-		log.Println(workouts, err)
+		if err != nil {
+			log.Println("err reading all workouts:", err)
+		}
 		return c.Render(http.StatusOK, "home", workouts)
 	})
 }
