@@ -1,6 +1,6 @@
 {{define "update-entry"}}
 
-<form hx-put="/app/workout/entry/{{.ID}}" hx-target="this" hx-swap="outerHTML">
+<form hx-patch="/app/workout/entry/{{.ID}}" hx-target="this" hx-swap="outerHTML" hx-ext="json-enc">
     <input type="text" name="junction_id" value="{{.JunctionID}}" hidden >
     <input type="number" name="set_number" value="{{.SetNumber}}" hidden >
     <label for="weight">
@@ -11,7 +11,7 @@
         Reps
         <input onclick="this.select()" type="number" name="reps" min="0" max="1000" value="{{.Reps}}">
     </label>
-    <input type="submit" value="Submit">
+    <input type="submit" value="Update">
 </form>
 <div id="entry-errors"></div>
 

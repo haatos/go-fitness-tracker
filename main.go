@@ -66,16 +66,20 @@ func main() {
 	e.POST("/register", handler.HandlePostRegister(db))
 	e.POST("/login", handler.HandleLogIn(db))
 
-	g := e.Group("/app")
-	g.Use(session.SessionMiddleware(db))
-	g.GET("", handler.HandleGetAppHome(db))
-	g.POST("/exercise/add", handler.HandlePostExerciseAdd(db))
-	g.GET("/workout/:id", handler.HandleGetWorkoutID(db))
-	g.POST("/workout/add-exercise/:id", handler.HandlePostWorkoutAddExercise(db))
-	g.GET("/workout/create", handler.HandleGetWorkoutCreate(db))
-	g.POST("/workout/create", handler.HandlePostWorkoutCreate(db))
-	g.POST("/workout/entry", handler.HandlePostWorkoutEntry(db))
-	// g.PUT("/workout/entry/:id", handler.HandlePatchWorkoutEntryID(db))
+	appGroup := e.Group("/app")
+	appGroup.Use(session.SessionMiddleware(db))
+	appGroup.GET("", handler.HandleGetAppHome(db))
+
+	exerciseGroup := appGroup.Group("/exercise")
+	exerciseGroup.POST("/add", handler.HandlePostExerciseAdd(db))
+
+	workoutGroup := appGroup.Group("/workout")
+	workoutGroup.GET("/:id", handler.HandleGetWorkoutID(db))
+	workoutGroup.POST("/add-exercise/:id", handler.HandlePostWorkoutAddExercise(db))
+	workoutGroup.GET("/create", handler.HandleGetWorkoutCreate(db))
+	workoutGroup.POST("/create", handler.HandlePostWorkoutCreate(db))
+	workoutGroup.POST("/entry", handler.HandlePostWorkoutEntry(db))
+	workoutGroup.PATCH("/entry/:id", handler.HandlePatchWorkoutEntryID(db))
 
 	e.Start(":8080")
 }

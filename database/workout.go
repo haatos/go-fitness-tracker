@@ -58,13 +58,14 @@ func ReadWorkoutLastCreated(db *sql.DB, workoutID string) time.Time {
 	var createdString string
 	stmt, err := db.Prepare(
 		`
-		SELECT e.created
+		SELECT e.time
 		FROM workout w
 		INNER JOIN junction j
 		ON j.workout_id = w.id
 		INNER JOIN entry e
 		ON e.junction_id = j.id
 		WHERE w.id = $1
+		ORDER BY e.time DESC
 		LIMIT 1
 		`,
 	)
@@ -76,7 +77,7 @@ func ReadWorkoutLastCreated(db *sql.DB, workoutID string) time.Time {
 	if err != nil {
 		return time.Time{}
 	}
-	created, err := time.Parse("2006-01-02 15:04:05Z", createdString)
+	created, err := time.Parse("2006-01-02T15:04:05Z", createdString)
 	if err != nil {
 		return time.Time{}
 	}
