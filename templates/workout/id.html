@@ -5,23 +5,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/tw.css">
     <script src="https://unpkg.com/htmx.org@1.9.8"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Document</title>
 </head>
 <body>
-    <main>
-        {{range .Data}}
+    <main class="w-full flex flex-col items-center px-2 sm:px-5">
+        <div class="w-full max-w-screen-sm flex flex-col space-y-5">
+            {{range .Data}}
 
-        <p>{{.ExerciseName}}</p>
+                <span class="font-bold text-lg">{{.ExerciseName}}</span>
+                <div class="flex flex-col space-y-3">
+                    {{range .Sets}}
 
-            {{range .Sets}}
+                        {{template "post-entry" .}}
 
-            {{template "post-entry" .}}
+                    {{end}}
+                </div>
 
             {{end}}
-
-        {{end}}
+        </div>
     </main>
 </body>
 </html>

@@ -5,15 +5,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/tw.css">
     <title>Document</title>
   </head>
   <body>
-    <main>
-      <a href="/app/workout/create">Create a new workout</a>
+    <main class="p-5">
+      <a href="/app/workout/create" class="border border-orange-800 rounded-md px-2">Create a new workout</a>
 
       {{range .}}
 
-      <a href="/app/workout/{{.ID}}">Start workout {{.Name}}</a>
+      <a href="/app/workout/{{.ID}}" class="border border-orange-800 rounded-md px-2">Start workout {{.Name}}</a>
 
       {{end}}
     </main>
