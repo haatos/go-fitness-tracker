@@ -5,22 +5,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/tw.css">
     <title>Document</title>
   </head>
   <body>
-    <main>
-      <form action="/register" method="post">
-        <input type="email" name="email" placeholder="Email..." />
-        <input type="password" name="password" placeholder="Password..." />
-        <input type="password" name="password_verification" placeholder="Password again..." />
-        <input type="submit" value="Submit" />
+    <main class="w-full h-screen flex flex-col space-y-5 justify-center items-center">
+      <form action="/register" method="post" class="flex flex-col space-y-5 w-full max-w-sm p-5 border border-orange-800 rounded-md shadow-md shadow-orange-800/20">
+        <input type="text" name="identity" placeholder="Username or email..." class="focus:outline-none border-b border-orange-800 px-2" />
+        <input type="password" name="password" placeholder="Password..." class="focus:outline-none border-b border-orange-800 px-2"/>
+        <input type="password" name="password_verification" placeholder="Password again..." class="focus:outline-none border-b border-orange-800 px-2"/>
+        <input type="submit" value="Submit" class="border border-orange-800 rounded-md px-5 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-500" />
       </form>
       {{if .}}
 
-      <p>Registration failed: {{.Error}}</p>
+      <p>Login failed: {{.Error}}</p>
 
       {{end}}
-      <p>Already have an account? Log in <a href="/">here</a></p>
+      <p>Already have an account? Log in <a href="/" class="text-orange-800 font-bold underline">here</a></p>
     </main>
   </body>
 </html>

@@ -49,9 +49,12 @@ func main() {
 	db := database.InitializeDatabase()
 
 	e := echo.New()
+
 	e.Renderer = &Templates{
 		templates: parseTemplates(),
 	}
+
+	e.Static("/static", "static")
 
 	e.POST("/remove-me", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "empty", nil)

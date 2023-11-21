@@ -1,0 +1,1 @@
+npx tailwindcss -o ./public/css/tw.css --minify
