@@ -11,17 +11,19 @@
     <title>Document</title>
 </head>
 <body>
-    <main class="w-full flex flex-col items-center px-2 sm:px-5">
-        <div class="w-full max-w-screen-sm flex flex-col space-y-5">
+    <main class="px-2 sm:px-5 md:px-0">
+        <div class="mx-auto w-full max-w-screen-sm flex flex-col space-y-5">
             {{range .Data}}
 
-                <span class="font-bold text-lg">{{.ExerciseName}}</span>
-                <div class="flex flex-col space-y-3">
-                    {{range .Sets}}
+                <div>
+                    <p class="font-bold text-lg text-center pb-1">{{.ExerciseName}}</p>
+                    <div class="flex flex-col space-y-3">
+                        {{range .Sets}}
 
-                        {{template "post-entry" .}}
+                            {{template "post-entry" .}}
 
-                    {{end}}
+                        {{end}}
+                    </div>
                 </div>
 
             {{end}}

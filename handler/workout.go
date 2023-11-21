@@ -5,9 +5,11 @@ import (
 	"fitness-tracker/database"
 	"fitness-tracker/model"
 	"fitness-tracker/schema"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v5"
@@ -121,14 +123,51 @@ func HandlePostWorkoutCreate(db *sql.DB) echo.HandlerFunc {
 		userID := c.Get("userID").(string)
 		workoutName := c.FormValue("workout_name")
 
+		workoutName = strings.TrimSpace(workoutName)
+
+		if workoutName == "" {
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: "Workout name must not be empty.",
+				},
+			)
+		}
+
 		tx, err := db.Begin()
 		if err != nil {
 			log.Println("unable to begin tx:", err)
-			return c.Render(http.StatusInternalServerError, "create-workout", nil)
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: "Internal server error. Please try again later.",
+				},
+			)
 		}
 		defer tx.Rollback()
 
 		w, err := database.CreateWorkout(tx, userID, workoutName)
+		if err != nil {
+			log.Println("err creating workout", err)
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: fmt.Sprintf("Unable to create workout with name '%s'", workoutName),
+				},
+			)
+		}
 
 		data := map[string][]string{}
 		for k, v := range c.Request().PostForm {
@@ -137,18 +176,52 @@ func HandlePostWorkoutCreate(db *sql.DB) echo.HandlerFunc {
 
 		exerciseIDs := data["exercise_id"]
 		setCountStrings := data["set_count"]
+
+		if len(exerciseIDs) == 0 || len(setCountStrings) == 0 {
+			log.Println("exercise length == 0 or setCountStrings length == 0")
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: "Workout must have at least one exercise with a set count.",
+				},
+			)
+		}
+
 		setCounts := []int{}
 		for _, v := range setCountStrings {
 			i, err := strconv.Atoi(v)
-			if err != nil {
-				return c.Render(http.StatusBadRequest, "create-workout", nil)
+			if err != nil || i <= 0 {
+				log.Println("invalid set number")
+				c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+				return c.Render(
+					http.StatusOK,
+					"error",
+					struct {
+						Error string
+					}{
+						Error: "Set counts must be positive and at least 1.",
+					},
+				)
 			}
 			setCounts = append(setCounts, i)
 		}
 
 		if len(exerciseIDs) != len(setCounts) {
 			log.Println("unequal amount of exercises and set counts")
-			return c.Render(http.StatusBadRequest, "create-workout", nil)
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: "Unequal amount of exercises and set counts.",
+				},
+			)
 		}
 
 		for i := range exerciseIDs {
@@ -159,16 +232,34 @@ func HandlePostWorkoutCreate(db *sql.DB) echo.HandlerFunc {
 
 			if err != nil {
 				log.Println("err creating junction:", err)
-				return c.Render(http.StatusInternalServerError, "create-workout", nil)
+				c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+				return c.Render(
+					http.StatusInternalServerError,
+					"error",
+					struct {
+						Error string
+					}{
+						Error: "Internal server error. Please try again later.",
+					},
+				)
 			}
 		}
 
 		err = tx.Commit()
 		if err != nil {
 			log.Println("err commiting tx:", err)
-			return c.Render(http.StatusInternalServerError, "create-workout", nil)
+			c.Response().Header().Set("HX-Retarget", "#create-workout-error")
+			return c.Render(
+				http.StatusInternalServerError,
+				"error",
+				struct {
+					Error string
+				}{
+					Error: "Internal server error. Please try again later.",
+				},
+			)
 		}
 
-		return c.Redirect(http.StatusSeeOther, "/app")
+		return c.Render(http.StatusOK, "workout-created", nil)
 	})
 }

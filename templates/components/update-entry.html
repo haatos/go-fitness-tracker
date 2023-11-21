@@ -4,10 +4,10 @@
     <input class="h-10" type="text" name="junction_id" value="{{.JunctionID}}" hidden >
     <input class="h-10" type="number" name="set_number" value="{{.SetNumber}}" hidden >
     <label for="weight">Weight</label>
-    <input class="text-center h-10 w-full focus:outline-none border border-orange-800 rounded-md px-2" onclick="this.select()" type="number" name="weight" min="0" max="1000" {{if not (eq .Weight 0)}}placeholder="{{.Weight}}"{{end}}>
+    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md px-2" onclick="this.select()" type="number" name="weight" min="0" max="1000" {{if not (eq .Weight 0)}}placeholder="{{.Weight}}"{{end}}>
     <label for="reps">Reps</label>
-    <input class="text-center h-10 w-full focus:outline-none border border-orange-800 rounded-md px-2" onclick="this.select()" type="number" name="reps" min="0" max="1000" {{if not (eq .Reps 0)}}placeholder="{{.Reps}}"{{end}}>
-    <input class="h-10 w-full border border-orange-800 rounded-md px-2" type="submit" value="Update">
+    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md px-2" onclick="this.select()" type="number" name="reps" min="0" max="1000" {{if not (eq .Reps 0)}}placeholder="{{.Reps}}"{{end}}>
+    <input class="h-10 w-full border border-slate-800 rounded-md px-2" type="submit" value="Update">
     <span id="entry-error"></span>
 </form>
 

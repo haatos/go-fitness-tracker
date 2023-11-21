@@ -5,42 +5,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/tw.css">
     <script src="https://unpkg.com/htmx.org@1.9.8"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <title>Document</title>
   </head>
   <body>
-    <main>
-      <form hx-post="/app/workout/create">
-        <label for="workout_name">
-          Workout name:
-          <input type="text" name="workout_name" />
-        </label>
+    <main id="create-workout-main" class="flex flex-col space-y-5 px-2 sm:px-4 mt-5">
+      <form hx-post="/app/workout/create" class="flex flex-col space-y-2" hx-target="#create-workout-main" hx-swap="innerHTML">
+        <div class="flex flex-col w-full">
+          <input type="text" name="workout_name" placeholder="Workout name..." class="focus:outline-none py-1 border border-slate-800 rounded-md px-2"/>
+        </div>
         <div id="workout-exercises"></div>
-        <input type="submit" value="Create new workout">
+        <input type="submit" value="Create new workout" class="border border-slate-800 rounded-md px-2">
       </form>
 
-      <div id="new-exercises">
+      <div class="h-4" id="create-workout-error"></div>
 
+      <div id="workout-exercises" class="flex flex-col space-y-1">
+        Add exercises:
       </div>
 
-      {{range .UserExercises}}
+      <div class="grid grid-cols-2 gap-2">
+        {{range .UserExercises}}
 
-      {{template "add-exercise-button" .}}
+          {{template "add-exercise-button" .}}
 
-      {{end}}
+        {{end}}
 
-      {{range .DefaultExercises}}
+        {{range .DefaultExercises}}
 
-      {{template "add-exercise-button" .}}
+          {{template "add-exercise-button" .}}
 
-      {{end}}
+        {{end}}
+      </div>
 
-      <form hx-post="/app/exercise/add" hx-target="#new-exercises" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-ext="json-enc">
-        <label for="name">
-          <input type="text" name="name">
-        </label>
-        <input type="submit" value="Create new exercise">
+      <form hx-post="/app/exercise/add" hx-target="#workout-exercises" hx-swap="beforeend" hx-on::after-request="this.reset()" hx-ext="json-enc" class="flex flex-col space-y-2 border border-slate-800 rounded-md p-2">
+        <span>Add a new exercise:</span>
+        <input type="text" name="name" placeholder="Exercise name..." class="focus:outline-none py-1 border border-slate-800 rounded-md px-2">
+        <input type="submit" value="Add new exercise" class="border border-slate-800 rounded-md">
       </form>
 
     </main>
