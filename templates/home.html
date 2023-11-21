@@ -9,14 +9,16 @@
     <title>Document</title>
   </head>
   <body>
-    <main class="p-5">
-      <a href="/app/workout/create" class="border border-orange-800 rounded-md px-2">Create a new workout</a>
+    <main class="p-5 flex flex-col space-y-5">
+      <a href="/app/workout/create" class="text-center border border-orange-800 rounded-md px-2">Create a new workout</a>
 
-      {{range .}}
+      <div class="flex flex-col space-y-3">
+        {{range .}}
 
-      <a href="/app/workout/{{.ID}}" class="border border-orange-800 rounded-md px-2">Start workout {{.Name}}</a>
+          <a href="/app/workout/{{.ID}}" class="text-center border border-orange-800 rounded-md px-2">Start workout {{.Name}}</a>
 
-      {{end}}
+        {{end}}
+      </div>
     </main>
   </body>
 </html>
