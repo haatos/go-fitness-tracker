@@ -53,3 +53,17 @@ func ReadUserByEmail(db *sql.DB, email string) (model.User, error) {
 	err = stmt.QueryRow(email).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.CreatedOn)
 	return user, err
 }
+
+func CountUsers(db *sql.DB) (int, error) {
+	stmt, err := db.Prepare(
+		`
+		SELECT COUNT(*) FROM user
+		`,
+	)
+	if err != nil {
+		return 0, err
+	}
+	var count int
+	err = stmt.QueryRow().Scan(&count)
+	return count, err
+}

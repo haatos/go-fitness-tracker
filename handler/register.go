@@ -22,10 +22,20 @@ func HandlePostRegister(db *sql.DB) echo.HandlerFunc {
 		}
 
 		passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 4)
-
 		if err != nil {
 			log.Println("err hashing password:", err)
 			return c.Render(http.StatusSeeOther, "register", struct{ Error string }{Error: "Error hashing your password"})
+		}
+
+		userCount, err := database.CountUsers(db)
+		if err != nil {
+			log.Println("err counting users", err)
+			return c.Render(http.StatusSeeOther, "register", struct{ Error string }{Error: "Error counting users"})
+		}
+
+		if userCount >= 100 {
+			log.Printf("max users hit: %d\n", userCount)
+			return c.Render(http.StatusSeeOther, "register", struct{ Error string }{Error: "Maximum amount of users reached."})
 		}
 
 		if err := database.CreateUser(db, email, string(passwordHash)); err != nil {
