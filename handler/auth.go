@@ -13,7 +13,7 @@ import (
 
 func HandleLogIn(db *sql.DB) echo.HandlerFunc {
 	return echo.HandlerFunc(func(c echo.Context) error {
-		email := c.FormValue("identity")
+		email := c.FormValue("email")
 		password := c.FormValue("password")
 
 		user, err := database.ReadUserByEmail(db, email)
