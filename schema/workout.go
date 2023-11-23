@@ -1,5 +1,7 @@
 package schema
 
+import "time"
+
 type Set struct {
 	JunctionID string
 	SetNumber  int
@@ -13,4 +15,11 @@ type WorkoutOut struct {
 	JunctionID   string
 	SetCount     int
 	Sets         []Set
+}
+
+type WorkoutEntry struct {
+	ExerciseName string
+	Weight       int
+	Reps         int
+	Time         time.Time
 }

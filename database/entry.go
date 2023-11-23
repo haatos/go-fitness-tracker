@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fitness-tracker/model"
+	"fitness-tracker/schema"
 	"time"
 
 	"github.com/google/uuid"
@@ -79,4 +80,41 @@ func ReadEntriesBetweenTimes(db *sql.DB, userID string, start, end time.Time) ([
 	}
 
 	return entries, nil
+}
+
+func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID, workoutID string, start, end time.Time) ([]schema.WorkoutEntry, error) {
+	wes := []schema.WorkoutEntry{}
+	stmt, err := db.Prepare(
+		`
+		SELECT ex.name, en.weight, en.reps, en.time
+		FROM workout w
+		INNER JOIN junction j
+		ON j.workout_id = w.id
+		INNER JOIN exercise ex
+		ON ex.id = j.exercise_id
+		INNER JOIN entry en
+		ON en.junction_id = j.id
+		WHERE w.id = $1 and w.user_id = $2 AND en.time BETWEEN $3 AND $4
+		`,
+	)
+	if err != nil {
+		return wes, err
+	}
+
+	rows, err := stmt.Query(workoutID, userID, start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
+	if err != nil {
+		return wes, err
+	}
+
+	for rows.Next() {
+		we := schema.WorkoutEntry{}
+
+		if err := rows.Scan(&we.ExerciseName, &we.Weight, &we.Reps, &we.Time); err != nil {
+			return wes, err
+		}
+
+		wes = append(wes, we)
+	}
+
+	return wes, nil
 }
