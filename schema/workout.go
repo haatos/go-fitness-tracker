@@ -19,7 +19,7 @@ type WorkoutOut struct {
 
 type WorkoutEntry struct {
 	ExerciseName string
-	Weight       int
-	Reps         int
+	SetNumber    int
+	Performance  int
 	Time         time.Time
 }

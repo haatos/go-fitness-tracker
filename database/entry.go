@@ -86,7 +86,7 @@ func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID, workoutID string, start,
 	wes := []schema.WorkoutEntry{}
 	stmt, err := db.Prepare(
 		`
-		SELECT ex.name, en.weight, en.reps, en.time
+		SELECT ex.name, en.set_number, en.weight, en.reps, en.time
 		FROM workout w
 		INNER JOIN junction j
 		ON j.workout_id = w.id
@@ -109,9 +109,13 @@ func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID, workoutID string, start,
 	for rows.Next() {
 		we := schema.WorkoutEntry{}
 
-		if err := rows.Scan(&we.ExerciseName, &we.Weight, &we.Reps, &we.Time); err != nil {
+		var w int
+		var r int
+		if err := rows.Scan(&we.ExerciseName, &we.SetNumber, &w, &r, &we.Time); err != nil {
 			return wes, err
 		}
+
+		we.Performance = w * r
 
 		wes = append(wes, we)
 	}
