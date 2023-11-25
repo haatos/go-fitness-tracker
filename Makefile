@@ -1,6 +1,15 @@
 build:
 	go build -ldflags "-s -w" -o bin/fitnesstracker main.go
 
+build-tw:
+	npx tailwindcss -o ./static/css/tw.css --minify
+
+deploy: build-tw build
+	scp -i $(id) -r 'static' ubuntu@$(ip):/opt/fitness-tracker/
+	scp -i $(id) -r 'templates' ubuntu@$(ip):/opt/fitness-tracker/
+	scp -i $(id) './bin/fitness-tracker' ubuntu@$(ip):/opt/fitness-tracker/
+	scp -i $(id) '.env' ubuntu@$(ip):/opt/fitness-tracker/
+
 migrate-down:
 	goose -dir migrations sqlite3 ./db.sqlite3 down
 

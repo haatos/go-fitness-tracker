@@ -11,8 +11,9 @@ import (
 
 func RedirectMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return echo.HandlerFunc(func(c echo.Context) error {
-		_, err := Store.Get(c.Request(), "session")
-		if err == nil {
+		sess, _ := Store.Get(c.Request(), "session")
+		_, ok := sess.Values["userID"].(string)
+		if ok {
 			return c.Redirect(http.StatusSeeOther, "/app")
 		}
 		return next(c)
