@@ -39,7 +39,7 @@ func HandleGetAppHome(db *sql.DB) echo.HandlerFunc {
 			Workouts: workouts,
 		}
 
-		return c.Render(http.StatusOK, "home", data)
+		return c.Render(http.StatusOK, "app", data)
 	})
 }
 

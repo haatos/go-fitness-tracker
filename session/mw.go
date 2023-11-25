@@ -9,6 +9,16 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+func RedirectMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return echo.HandlerFunc(func(c echo.Context) error {
+		_, err := Store.Get(c.Request(), "session")
+		if err == nil {
+			return c.Redirect(http.StatusSeeOther, "/app")
+		}
+		return next(c)
+	})
+}
+
 func SessionMiddleware(db *sql.DB) func(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.HandlerFunc(func(c echo.Context) error {

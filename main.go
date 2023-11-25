@@ -56,18 +56,21 @@ func main() {
 
 	e.Static("/static", "static")
 
-	e.POST("/remove-me", func(c echo.Context) error {
+	publicGroup := e.Group("")
+	publicGroup.Use(session.RedirectMiddleware)
+
+	publicGroup.POST("/remove-me", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "empty", nil)
 	})
 
-	e.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "index", nil)
+	publicGroup.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "login", nil)
 	})
-	e.GET("/register", func(c echo.Context) error {
+	publicGroup.GET("/register", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "register", nil)
 	})
-	e.POST("/register", handler.HandlePostRegister(db))
-	e.POST("/login", handler.HandleLogIn(db))
+	publicGroup.POST("/register", handler.HandlePostRegister(db))
+	publicGroup.POST("/login", handler.HandleLogIn(db))
 
 	appGroup := e.Group("/app")
 	appGroup.Use(session.SessionMiddleware(db))
