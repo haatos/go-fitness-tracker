@@ -1,15 +1,15 @@
 {{define "update-entry"}}
 
-<form hx-patch="/app/workout/entry/{{.ID}}" hx-target="this" hx-swap="outerHTML" hx-ext="json-enc" class="w-full max-w-screen-sm flex items-center space-x-2 h-10">
+<form hx-patch="/app/workout/entry/{{.ID}}" hx-target="this" hx-swap="outerHTML" hx-ext="json-enc" class="w-full max-w-screen-sm flex items-center space-x-2 h-10 bg-slate-200 p-1 rounded-sm">
     <input class="h-10" type="text" name="junction_id" value="{{.JunctionID}}" hidden >
     <div class="text-center w-full">
         <span>Set {{.SetNumber}}</span>
     </div>
     <input class="text-center h-10 w-10 focus:outline-none py-1 border border-slate-800 rounded-md" type="number" name="set_number" value="{{.SetNumber}}" hidden >
     <label for="weight">Weight</label>
-    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md" onclick="this.select()" type="number" name="weight" min="0" max="1000" {{if not (eq .Weight 0)}}placeholder="{{.Weight}}"{{end}}>
+    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md placeholder-slate-600" onclick="this.select()" type="number" name="weight" min="0" max="1000" {{if not (eq .Weight 0)}}placeholder="{{.Weight}}"{{end}}>
     <label for="reps">Reps</label>
-    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md" onclick="this.select()" type="number" name="reps" min="0" max="1000" {{if not (eq .Reps 0)}}placeholder="{{.Reps}}"{{end}}>
+    <input class="text-center h-10 w-full focus:outline-none py-1 border border-slate-800 rounded-md placeholder-slate-600" onclick="this.select()" type="number" name="reps" min="0" max="1000" {{if not (eq .Reps 0)}}placeholder="{{.Reps}}"{{end}}>
     <input class="h-10 w-full border border-slate-800 rounded-md px-2 cursor-pointer" type="submit" value="Update">
     <span id="entry-error"></span>
 </form>
