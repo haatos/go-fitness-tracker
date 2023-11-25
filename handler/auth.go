@@ -30,7 +30,7 @@ func HandleLogIn(db *sql.DB) echo.HandlerFunc {
 			)
 		}
 
-		if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(os.Getenv("SUGAR")+password)); err != nil {
+		if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(os.Getenv("FIT_SUGAR")+password)); err != nil {
 			log.Println("err comparing password:", err)
 			return c.Render(
 				http.StatusSeeOther,

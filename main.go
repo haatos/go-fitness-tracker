@@ -44,7 +44,7 @@ func parseTemplates() *template.Template {
 
 func main() {
 	dotenv.ParseDotenv()
-	session.Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
+	session.Store = sessions.NewCookieStore([]byte(os.Getenv("FIT_SESSION_SECRET")))
 
 	db := database.InitializeDatabase()
 
@@ -88,5 +88,5 @@ func main() {
 	workoutGroup.POST("/entry", handler.HandlePostWorkoutEntry(db))
 	workoutGroup.PATCH("/entry/:id", handler.HandlePatchWorkoutEntryID(db))
 
-	e.Start(":8080")
+	e.Start(os.Getenv("FIT_PORT"))
 }

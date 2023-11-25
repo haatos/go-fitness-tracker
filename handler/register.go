@@ -22,7 +22,7 @@ func HandlePostRegister(db *sql.DB) echo.HandlerFunc {
 			return c.Render(http.StatusSeeOther, "register", nil)
 		}
 
-		passwordHash, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("SUGAR")+password), 4)
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("FIT_SUGAR")+password), 4)
 		if err != nil {
 			log.Println("err hashing password:", err)
 			return c.Render(http.StatusSeeOther, "register", struct{ Error string }{Error: "Error hashing your password"})
