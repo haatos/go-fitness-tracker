@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v5"
@@ -40,48 +42,75 @@ type Data struct {
 func HandleGetAppChartData(db *sql.DB) echo.HandlerFunc {
 	return echo.HandlerFunc(func(c echo.Context) error {
 		userID := c.Get("userID").(string)
-		workoutID := c.PathParam("workoutID")
 		startStr := c.QueryParam("start")
-		log.Println(startStr)
-		start, err := time.Parse("2006-01-02 15:04:05", startStr)
+		start, err := time.Parse("2006-01-02T15:04:05.000Z", startStr)
 		if err != nil {
 			log.Println("invalid start:", err)
 			return c.Render(http.StatusInternalServerError, "empty", nil)
 		}
 		end := time.Now().UTC()
 
-		wes, err := database.ReadWorkoutEntriesBetweenTimes(db, userID, workoutID, start, end)
+		wes, err := database.ReadWorkoutEntriesBetweenTimes(db, userID, start, end)
 
-		labels := map[string]map[time.Time]bool{}
-		output := map[string]map[int]*Dataset{}
+		labels := map[string]map[string]bool{}
+		output := map[string]map[string]*Dataset{}
 
 		for _, we := range wes {
+			set := fmt.Sprintf("Set %d", we.SetNumber)
 			if _, ok := output[we.ExerciseName]; ok {
-				if _, ok := output[we.ExerciseName][we.SetNumber]; ok {
-					output[we.ExerciseName][we.SetNumber].Data = append(output[we.ExerciseName][we.SetNumber].Data, we.Performance)
+				if _, ok := output[we.ExerciseName][set]; ok {
+					output[we.ExerciseName][set].Data = append(output[we.ExerciseName][set].Data, we.Performance)
 				} else {
-					output[we.ExerciseName][we.SetNumber] = &Dataset{
-						Label: fmt.Sprintf("Set %d", we.SetNumber),
+					output[we.ExerciseName][set] = &Dataset{
+						Label: set,
 						Data:  []int{we.Performance},
 					}
 				}
 			} else {
-				output[we.ExerciseName] = map[int]*Dataset{}
-				output[we.ExerciseName][we.SetNumber] = &Dataset{
-					Label: fmt.Sprintf("Set %d", we.SetNumber),
+				output[we.ExerciseName] = map[string]*Dataset{}
+				output[we.ExerciseName][set] = &Dataset{
+					Label: set,
 					Data:  []int{we.Performance},
 				}
 			}
 			if _, ok := labels[we.ExerciseName]; ok {
-				labels[we.ExerciseName][we.Time] = true
+				labels[we.ExerciseName][we.Time.Format("2006-01-02")] = true
 			} else {
-				labels[we.ExerciseName] = map[time.Time]bool{}
-				labels[we.ExerciseName][we.Time] = true
+				labels[we.ExerciseName] = map[string]bool{}
+				labels[we.ExerciseName][we.Time.Format("2006-01-02")] = true
 			}
 		}
 
 		// TODO add LABELS
 
-		return c.JSON(http.StatusOK, output)
+		outputLabels := map[string][]string{}
+		for ex := range labels {
+			outputLabels[ex] = []string{}
+			ls := []string{}
+			for l := range labels[ex] {
+				ls = append(ls, l[5:])
+			}
+			slices.Sort(ls)
+			for _, l := range ls {
+				split := strings.Split(l, "-")
+				d := split[1]
+				if d == "1" {
+					outputLabels[ex] = append(outputLabels[ex], l)
+				} else {
+					outputLabels[ex] = append(outputLabels[ex], d)
+				}
+
+			}
+		}
+
+		finalOutput := struct {
+			Labels map[string][]string            `json:"labels"`
+			Data   map[string]map[string]*Dataset `json:"data"`
+		}{
+			Labels: outputLabels,
+			Data:   output,
+		}
+
+		return c.JSON(http.StatusOK, finalOutput)
 	})
 }

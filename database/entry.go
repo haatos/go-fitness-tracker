@@ -82,26 +82,24 @@ func ReadEntriesBetweenTimes(db *sql.DB, userID string, start, end time.Time) ([
 	return entries, nil
 }
 
-func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID, workoutID string, start, end time.Time) ([]schema.WorkoutEntry, error) {
+func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID string, start, end time.Time) ([]schema.WorkoutEntry, error) {
 	wes := []schema.WorkoutEntry{}
 	stmt, err := db.Prepare(
 		`
 		SELECT ex.name, en.set_number, en.weight, en.reps, en.time
-		FROM workout w
+		FROM entry en
 		INNER JOIN junction j
-		ON j.workout_id = w.id
+		ON en.junction_id = j.id
 		INNER JOIN exercise ex
 		ON ex.id = j.exercise_id
-		INNER JOIN entry en
-		ON en.junction_id = j.id
-		WHERE w.id = $1 and w.user_id = $2 AND en.time BETWEEN $3 AND $4
+		WHERE en.user_id = $1 AND en.time BETWEEN $2 AND $3
 		`,
 	)
 	if err != nil {
 		return wes, err
 	}
 
-	rows, err := stmt.Query(workoutID, userID, start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
+	rows, err := stmt.Query(userID, start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
 	if err != nil {
 		return wes, err
 	}
@@ -115,7 +113,13 @@ func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID, workoutID string, start,
 			return wes, err
 		}
 
-		we.Performance = w * r
+		if w == 0 {
+			// non-weighted exercise
+			we.Performance = r
+		} else {
+			// weighted exercise
+			we.Performance = w * r
+		}
 
 		wes = append(wes, we)
 	}

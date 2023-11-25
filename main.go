@@ -72,7 +72,7 @@ func main() {
 	appGroup := e.Group("/app")
 	appGroup.Use(session.SessionMiddleware(db))
 	appGroup.GET("", handler.HandleGetAppHome(db))
-	appGroup.GET("/chart-data/:workoutID", handler.HandleGetAppChartData(db))
+	appGroup.GET("/chart-data", handler.HandleGetAppChartData(db))
 
 	exerciseGroup := appGroup.Group("/exercise")
 	exerciseGroup.POST("/add", handler.HandlePostExerciseAdd(db))
