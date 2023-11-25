@@ -2,6 +2,11 @@ package schema
 
 import "time"
 
+type LastWorkout struct {
+	Name string
+	Time time.Time
+}
+
 type Set struct {
 	JunctionID string
 	SetNumber  int

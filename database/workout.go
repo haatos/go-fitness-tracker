@@ -119,3 +119,32 @@ func ReadWorkoutJunctions(db *sql.DB, userID, workoutID string) ([]schema.Workou
 
 	return wos, nil
 }
+
+func ReadLastWorkout(db *sql.DB, userID string) (string, time.Time, error) {
+	var workoutName string
+	var workoutTime time.Time
+
+	stmt, err := db.Prepare(
+		`
+		SELECT w.name, en.time
+		FROM workout w
+		INNER JOIN junction j
+		ON w.id = j.workout_id
+		INNER JOIN entry en
+		ON j.id = en.junction_id
+		WHERE w.user_id = $1
+		ORDER BY en.time DESC
+		LIMIT 1
+		`,
+	)
+	if err != nil {
+		return workoutName, workoutTime, err
+	}
+
+	err = stmt.QueryRow(userID).Scan(&workoutName, &workoutTime)
+	if err != nil {
+		return workoutName, workoutTime, err
+	}
+
+	return workoutName, workoutTime, nil
+}

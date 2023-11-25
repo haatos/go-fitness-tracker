@@ -3,6 +3,8 @@ package handler
 import (
 	"database/sql"
 	"fitness-tracker/database"
+	"fitness-tracker/model"
+	"fitness-tracker/schema"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,7 +23,23 @@ func HandleGetAppHome(db *sql.DB) echo.HandlerFunc {
 			log.Println("err reading all workouts:", err)
 		}
 
-		return c.Render(http.StatusOK, "home", workouts)
+		name, date, err := database.ReadLastWorkout(db, userID)
+		if err != nil {
+			log.Println("err reading last workout:", err)
+		}
+
+		data := struct {
+			LastWorkout schema.LastWorkout
+			Workouts    []model.Workout
+		}{
+			LastWorkout: schema.LastWorkout{
+				Name: name,
+				Time: date,
+			},
+			Workouts: workouts,
+		}
+
+		return c.Render(http.StatusOK, "home", data)
 	})
 }
 
