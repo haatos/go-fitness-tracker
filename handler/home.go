@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"slices"
 	"strings"
 	"time"
@@ -31,13 +32,17 @@ func HandleGetAppHome(db *sql.DB) echo.HandlerFunc {
 		data := struct {
 			LastWorkout schema.LastWorkout
 			Workouts    []model.Workout
+			Env         string
 		}{
 			LastWorkout: schema.LastWorkout{
 				Name: name,
 				Time: date,
 			},
 			Workouts: workouts,
+			Env:      os.Getenv("FIT_ENVIRONMENT"),
 		}
+
+		log.Printf("%+v", data)
 
 		return c.Render(http.StatusOK, "app", data)
 	})

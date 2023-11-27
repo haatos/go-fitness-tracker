@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS exercise (
     id TEXT PRIMARY KEY,
     name TEXT,
     user_id TEXT,
-    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
     UNIQUE(name, user_id)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS workout (
     id TEXT PRIMARY KEY,
     name TEXT,
     user_id TEXT,
-    FOREIGN KEY(user_id) REFERENCES user(id)
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS junction (
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS junction (
     user_id TEXT,
     set_count INTEGER,
     FOREIGN KEY(exercise_id) REFERENCES exercise(id),
-    FOREIGN KEY(workout_id) REFERENCES workout(id),
-    FOREIGN KEY(user_id) REFERENCES user(id)
+    FOREIGN KEY(workout_id) REFERENCES workout(id) ON DELETE CASCADE,
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS entry (
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS entry (
     weight INTEGER,
     reps INTEGER,
     time TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES user(id),
-    FOREIGN KEY(junction_id) REFERENCES junction(id)
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY(junction_id) REFERENCES junction(id) ON DELETE CASCADE
 );
 -- +goose StatementEnd
 

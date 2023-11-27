@@ -5,6 +5,7 @@ import (
 	"fitness-tracker/dotenv"
 	"fitness-tracker/handler"
 	"fitness-tracker/session"
+	"flag"
 	"io"
 	"io/fs"
 	"net/http"
@@ -43,6 +44,11 @@ func parseTemplates() *template.Template {
 }
 
 func main() {
+	envPtr := flag.String("env", "dev", "environment dev|test|prod")
+	flag.Parse()
+
+	os.Setenv("FIT_ENVIRONMENT", *envPtr)
+
 	dotenv.ParseDotenv()
 	session.Store = sessions.NewCookieStore([]byte(os.Getenv("FIT_SESSION_SECRET")))
 

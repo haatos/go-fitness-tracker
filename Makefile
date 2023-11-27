@@ -10,6 +10,7 @@ deploy: build-tw build
 	scp -i $(id) -r 'templates' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) './bin/fitnesstracker' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) '.env' ubuntu@$(ip):/opt/fitness-tracker/
+	scp -i $(id) 'Makefile' ubuntu@$(ip):/opt/fitness-tracker/
 
 migrate-down:
 	goose -dir migrations sqlite3 ./db.sqlite3 down
