@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo/v5"
 )
@@ -20,19 +19,11 @@ func HandleGetWorkoutID(db *sql.DB) echo.HandlerFunc {
 		workoutID := c.PathParam("id")
 		userID := c.Get("userID").(string)
 
-		latestCreated := database.ReadWorkoutLastCreated(db, workoutID)
+		entries := []schema.Entry{}
 
-		entries := []model.Entry{}
-
-		if !latestCreated.IsZero() {
-			start := time.Date(latestCreated.Year(), latestCreated.Month(), latestCreated.Day(), 0, 0, 0, 0, latestCreated.Location())
-			end := start.Add(24 * time.Hour)
-
-			var err error
-			entries, err = database.ReadEntriesBetweenTimes(db, userID, start, end)
-			if err != nil {
-				log.Println("err reading entries between times:", err)
-			}
+		entries, err := database.ReadLatestEntryForEachExercise(db, userID)
+		if err != nil {
+			log.Println("err reading latest entry for each exercise", err)
 		}
 
 		wos, err := database.ReadWorkoutJunctions(db, userID, workoutID)
@@ -46,7 +37,7 @@ func HandleGetWorkoutID(db *sql.DB) echo.HandlerFunc {
 			for j := 1; j <= wos[i].SetCount; j++ {
 				s := schema.Set{}
 				for _, entry := range entries {
-					if entry.SetNumber == j && wos[i].JunctionID == entry.JunctionID {
+					if entry.SetNumber == j && wos[i].ExerciseName == entry.ExerciseName {
 						s.Weight = entry.Weight
 						s.Reps = entry.Reps
 						break

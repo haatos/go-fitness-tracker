@@ -54,37 +54,6 @@ func ReadAllWorkouts(db *sql.DB, userID string) ([]model.Workout, error) {
 	return workouts, nil
 }
 
-func ReadWorkoutLastCreated(db *sql.DB, workoutID string) time.Time {
-	var createdString string
-	stmt, err := db.Prepare(
-		`
-		SELECT e.time
-		FROM workout w
-		INNER JOIN junction j
-		ON j.workout_id = w.id
-		INNER JOIN entry e
-		ON e.junction_id = j.id
-		WHERE w.id = $1
-		ORDER BY e.time DESC
-		LIMIT 1
-		`,
-	)
-	if err != nil {
-		return time.Time{}
-	}
-
-	err = stmt.QueryRow(workoutID).Scan(&createdString)
-	if err != nil {
-		return time.Time{}
-	}
-	created, err := time.Parse("2006-01-02T15:04:05Z", createdString)
-	if err != nil {
-		return time.Time{}
-	}
-
-	return created
-}
-
 func ReadWorkoutJunctions(db *sql.DB, userID, workoutID string) ([]schema.WorkoutOut, error) {
 	stmt, err := db.Prepare(
 		`

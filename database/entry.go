@@ -126,3 +126,51 @@ func ReadWorkoutEntriesBetweenTimes(db *sql.DB, userID string, start, end time.T
 
 	return wes, nil
 }
+
+func ReadLatestEntryForEachExercise(db *sql.DB, userID string) ([]schema.Entry, error) {
+	entries := []schema.Entry{}
+
+	stmt, err := db.Prepare(
+		`
+		SELECT en.id, en.user_id, en.junction_id, en.set_number, en.weight, en.reps, en.time, ex.name, MAX(en.time)
+		FROM entry en
+		INNER JOIN junction j
+		ON en.junction_id = j.id
+		INNER JOIN exercise ex
+		ON j.exercise_id = ex.id
+		WHERE en.user_id = $1
+		GROUP BY en.set_number, ex.name
+		`,
+	)
+	if err != nil {
+		return entries, err
+	}
+
+	rows, err := stmt.Query(userID)
+	if err != nil {
+		return entries, err
+	}
+
+	for rows.Next() {
+		entry := schema.Entry{}
+
+		var x interface{}
+		if err := rows.Scan(
+			&entry.ID,
+			&entry.UserID,
+			&entry.JunctionID,
+			&entry.SetNumber,
+			&entry.Weight,
+			&entry.Reps,
+			&entry.Time,
+			&entry.ExerciseName,
+			&x,
+		); err != nil {
+			return entries, err
+		}
+
+		entries = append(entries, entry)
+	}
+
+	return entries, nil
+}
