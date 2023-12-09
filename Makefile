@@ -5,12 +5,14 @@ build-tw:
 	npx tailwindcss -o ./static/css/tw.css --minify
 
 deploy: build-tw build
+	ssh -i $(id) ubuntu@$(ip) "sudo systemctl stop fithaatos"
 	scp -i $(id) -r 'migrations' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) -r 'static' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) -r 'templates' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) './bin/fitnesstracker' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) '.env' ubuntu@$(ip):/opt/fitness-tracker/
 	scp -i $(id) 'Makefile' ubuntu@$(ip):/opt/fitness-tracker/
+	ssh -i $(id) ubuntu@$(ip) "sudo systemctl start fithaatos"
 
 migrate-down:
 	goose -dir migrations sqlite3 ./db.sqlite3 down
