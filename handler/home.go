@@ -42,8 +42,6 @@ func HandleGetAppHome(db *sql.DB) echo.HandlerFunc {
 			Env:      os.Getenv("FIT_ENVIRONMENT"),
 		}
 
-		log.Printf("%+v", data)
-
 		return c.Render(http.StatusOK, "app", data)
 	})
 }

@@ -1,11 +1,31 @@
 {{define "workout-exercise"}}
 
-<div>
+<div id="workout-ex">
   <input type="hidden" name="exercise_id" value="{{.ID}}" />
   <div class="grid grid-cols-5 gap-1">
-    <input type="text" name="exercise_name" disabled value="{{.Name}}" class="text-center col-span-2 border border-slate-800"/>
-    <input class="col-span-2 w-full focus:outline-none py-1 border border-slate-800 px-2" type="number" name="set_count" placeholder="Sets..." min="0" max="20">
-    <button class="col-span-1 w-full font-bold text-red-600 text-lg text-center border border-red-600" hx-post="/remove-me" hx-target="closest div" hx-swap="outerHTML">X</button>
+    <input
+      type="text"
+      name="exercise_name"
+      disabled
+      value="{{.Name}}"
+      class="text-center col-span-2 border border-slate-800"
+    />
+    <input
+      class="col-span-2 w-full focus:outline-none py-1 border border-slate-800 px-2"
+      type="number"
+      name="set_count"
+      placeholder="Sets..."
+      min="0"
+      max="20"
+    />
+    <div
+      class="cursor-pointer col-span-1 w-full font-bold text-red-600 text-lg text-center border border-red-600"
+      hx-post="/remove-me"
+      hx-target="closest div#workout-ex"
+      hx-swap="outerHTML"
+    >
+      X
+    </div>
   </div>
 </div>
 
