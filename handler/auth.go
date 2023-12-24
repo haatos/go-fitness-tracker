@@ -2,11 +2,12 @@ package handler
 
 import (
 	"database/sql"
-	"fitness-tracker/database"
-	"fitness-tracker/session"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/tomihaapalainen/go-fitness-tracker/database"
+	"github.com/tomihaapalainen/go-fitness-tracker/session"
 
 	"github.com/labstack/echo/v5"
 	"golang.org/x/crypto/bcrypt"

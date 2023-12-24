@@ -3,11 +3,12 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"fitness-tracker/database"
-	"fitness-tracker/model"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/tomihaapalainen/go-fitness-tracker/database"
+	"github.com/tomihaapalainen/go-fitness-tracker/model"
 
 	"github.com/labstack/echo/v5"
 )

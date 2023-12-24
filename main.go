@@ -1,10 +1,6 @@
 package main
 
 import (
-	"fitness-tracker/database"
-	"fitness-tracker/dotenv"
-	"fitness-tracker/handler"
-	"fitness-tracker/session"
 	"flag"
 	"io"
 	"io/fs"
@@ -14,13 +10,16 @@ import (
 	"regexp"
 	"text/template"
 
+	"github.com/tomihaapalainen/go-fitness-tracker/database"
+	"github.com/tomihaapalainen/go-fitness-tracker/dotenv"
+	"github.com/tomihaapalainen/go-fitness-tracker/handler"
+	"github.com/tomihaapalainen/go-fitness-tracker/session"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v5"
 
 	_ "github.com/mattn/go-sqlite3"
 )
-
-var pathRe *regexp.Regexp = regexp.MustCompile(`^.+\.html$`)
 
 type Templates struct {
 	templates *template.Template
@@ -31,6 +30,7 @@ func (t *Templates) Render(w io.Writer, name string, data interface{}, e echo.Co
 }
 
 func parseTemplates() *template.Template {
+	pathRe := regexp.MustCompile(`^.+\.html$`)
 	paths := []string{}
 
 	filepath.Walk("templates", func(path string, info fs.FileInfo, err error) error {

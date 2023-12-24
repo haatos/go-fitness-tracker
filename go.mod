@@ -1,4 +1,4 @@
-module fitness-tracker
+module github.com/tomihaapalainen/go-fitness-tracker
 
 go 1.21.4
 

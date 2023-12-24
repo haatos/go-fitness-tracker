@@ -2,9 +2,10 @@ package database
 
 import (
 	"database/sql"
-	"fitness-tracker/model"
-	"fitness-tracker/schema"
 	"time"
+
+	"github.com/tomihaapalainen/go-fitness-tracker/model"
+	"github.com/tomihaapalainen/go-fitness-tracker/schema"
 
 	"github.com/google/uuid"
 )

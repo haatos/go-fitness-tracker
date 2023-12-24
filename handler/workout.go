@@ -2,14 +2,15 @@ package handler
 
 import (
 	"database/sql"
-	"fitness-tracker/database"
-	"fitness-tracker/model"
-	"fitness-tracker/schema"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/tomihaapalainen/go-fitness-tracker/database"
+	"github.com/tomihaapalainen/go-fitness-tracker/model"
+	"github.com/tomihaapalainen/go-fitness-tracker/schema"
 
 	"github.com/labstack/echo/v5"
 )

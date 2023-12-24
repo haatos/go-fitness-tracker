@@ -2,9 +2,10 @@ package session
 
 import (
 	"database/sql"
-	"fitness-tracker/database"
 	"log"
 	"net/http"
+
+	"github.com/tomihaapalainen/go-fitness-tracker/database"
 
 	"github.com/labstack/echo/v5"
 )
