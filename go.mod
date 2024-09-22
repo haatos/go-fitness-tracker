@@ -1,6 +1,6 @@
 module github.com/tomihaapalainen/go-fitness-tracker
 
-go 1.21.4
+go 1.22.1
 
 require (
 	github.com/google/uuid v1.4.0
